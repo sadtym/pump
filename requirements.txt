@@ -1,4 +1,4 @@
-pandas
+بpandas
 numpy
 ta
 requests
