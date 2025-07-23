@@ -1,0 +1,17 @@
+[33mcommit 225f2ee97d153327de407302172447f20ea088ab[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: sajad11228 <sjd.col.11228@gmail.com>
+Date:   Tue Jul 22 02:20:35 2025 +0330
+
+    fix: remove invalid character from requirements.txt
+
+[33mcommit f4d0ec2b42bb09b47a7b21864debf0a6c4c70bab[m
+Author: sajad11228 <sjd.col.11228@gmail.com>
+Date:   Tue Jul 22 01:50:52 2025 +0330
+
+    first commit
+
+[33mcommit 1c9a72732f0f5c2ab932ece8b9cae3d0e17474c1[m
+Author: sajad11228 <sjd.col.11228@gmail.com>
+Date:   Tue Jul 22 00:38:39 2025 +0330
+
+    first commit

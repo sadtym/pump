@@ -469,6 +469,7 @@ def fetch_real_crypto_data():
     
     try:
         response = requests.get(url, params=params, timeout=15)
+        time.sleep(5)  # تاخیر برای جلوگیری از rate limit
         if response.status_code == 200:
             data = response.json()
             tokens = []
@@ -690,23 +691,37 @@ def main():
             table += f"<td>{'، '.join(t.signals or [])}</td></tr>"
         table += "</table>"
         return table
-    html_msg = html_table(all_best_coins)
+    # حذف کامل ارزهای تکراری (حتی اگر در چند تایم‌فریم یا سورس باشند):
+    unique_dict = {}
+    for coin, tf in all_best_coins:
+        symbol_norm = coin.symbol.upper().strip()
+        if symbol_norm not in unique_dict:
+            unique_dict[symbol_norm] = (coin, tf)
+    unique_best_coins = list(unique_dict.values())
+    html_msg = html_table(unique_best_coins[:5])  # فقط ۵ ارز برتر برای تلگرام
     scanner.send_telegram_alert(html_msg)
     print("\n📊 گزارش حرفه‌ای به تلگرام ارسال شد.")
     print("\n🎯 پایان اسکن حرفه‌ای.")
 
-    return signals_found
+
 
 if __name__ == "__main__":
-    try:
-        print("🔥 اجرای اسکنر ارز دیجیتال با داده‌های واقعی...")
-        print("📡 اتصال به CoinGecko API...\n")
-        result = main()
-        print(f"\n🎯 نتیجه نهایی: {'✅ سیگنال‌هایی پیدا شد!' if result else '⚪ هیچ سیگنال قوی‌ای پیدا نشد.'}")
-        print("\n💡 نکته: برای داده‌های به‌روز، مجدداً اجرا کنید.")
-    except KeyboardInterrupt:
-        print("\n⏹️ اسکنر توسط کاربر متوقف شد.")
-    except Exception as e:
-        print(f"\n❌ خطای غیرمنتظره: {e}")
-        print("💡 اگر خطای اتصال دیدید، فیلترشکن فعال کنید.")
-        sys.exit(1)
+    import time
+    DELAY_SECONDS = 300  # تاخیر ۵ دقیقه بین اجراها
+    while True:
+        try:
+            print("🔥 اجرای اسکنر ارز دیجیتال با داده‌های واقعی...")
+            print("📡 اتصال به CoinGecko API...\n")
+            result = main()
+            print(f"\n🎯 نتیجه نهایی: {'✅ سیگنال‌هایی پیدا شد!' if result else '⚪ هیچ سیگنال قوی‌ای پیدا نشد.'}")
+            print(f"\n⏳ در حال انتظار {DELAY_SECONDS//60} دقیقه تا اجرای بعدی...")
+            time.sleep(DELAY_SECONDS)
+        except KeyboardInterrupt:
+            print("\n⏹️ اسکنر توسط کاربر متوقف شد.")
+            break
+        except Exception as e:
+            print(f"\n❌ خطای غیرمنتظره: {e}")
+            print("💡 اگر خطای اتصال دیدید، فیلترشکن فعال کنید.")
+            print(f"🔁 تلاش برای ادامه اجرای برنامه پس از {DELAY_SECONDS//60} دقیقه...")
+            time.sleep(DELAY_SECONDS)
+            continue
